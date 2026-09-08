@@ -4,7 +4,7 @@ import CatalogPage from "./pages/CatalogPage";
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<CatalogPage />} />
+      <Route path="/admin-web/" element={<CatalogPage />} />
     </Routes>
   );
 }
