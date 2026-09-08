@@ -1,7 +1,5 @@
-/* @tailwind base; */
-/* @tailwind components; */
-/* @tailwind utilities; */
 @import "tailwindcss";
+@config "../tailwind.config.js";
 
 @layer base {
   body {
@@ -14,10 +12,10 @@
     @apply inline-flex items-center gap-1.5 rounded bg-accent px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-60;
   }
   .btn-secondary {
-    @apply btn bg-panel text-ink border border-border hover:bg-bg;
+    @apply inline-flex items-center gap-1.5 rounded px-4 py-2.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 bg-panel text-ink border border-border hover:bg-bg;
   }
   .btn-danger {
-    @apply btn bg-danger hover:bg-danger-hover;
+    @apply inline-flex items-center gap-1.5 rounded px-4 py-2.5 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-60 bg-danger hover:bg-danger-hover;
   }
   .btn-small {
     @apply px-2.5 py-1.5 text-[13px];
