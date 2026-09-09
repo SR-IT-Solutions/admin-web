@@ -3,56 +3,78 @@ import Modal from "../ui/Modal";
 import StatusMessage from "../ui/StatusMessage";
 import { useSettings } from "../../context/SettingsContext";
 
+const BLANK = {
+  supabaseUrl: "",
+  supabaseKey: "",
+  cloudName: "",
+  uploadPreset: "",
+};
+
 export default function SettingsModal({ open, onClose, forced }) {
-  const { settings, saveSettings } = useSettings();
+  const { settings, saveSettings, vaultExists } = useSettings();
   const [form, setForm] = useState(settings);
+  const [passphrase, setPassphrase] = useState("");
+  const [confirmPassphrase, setConfirmPassphrase] = useState("");
   const [status, setStatus] = useState({ text: "", tone: "muted" });
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (open) {
-      setForm(settings);
+      setForm(settings.supabaseUrl ? settings : BLANK);
+      setPassphrase("");
+      setConfirmPassphrase("");
       setStatus({ text: "", tone: "muted" });
     }
   }, [open, settings]);
 
-  const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+  const set = (key) => (event) =>
+    setForm((current) => ({ ...current, [key]: event.target.value }));
 
-  const attemptClose = () => {
-    if (!form.supabaseUrl || !form.supabaseKey) {
-      setStatus({
-        text: "Add at least the Supabase URL and key before closing, or the catalog can't load.",
-        tone: "error",
-      });
-      return;
-    }
-    onClose();
-  };
-
-  const handleSave = () => {
+  const handleSave = async () => {
     const next = {
       supabaseUrl: form.supabaseUrl.trim(),
       supabaseKey: form.supabaseKey.trim(),
       cloudName: (form.cloudName || "").trim(),
       uploadPreset: (form.uploadPreset || "").trim(),
     };
+
     if (!next.supabaseUrl || !next.supabaseKey) {
       setStatus({ text: "Supabase URL and key are required.", tone: "error" });
       return;
     }
-    saveSettings(next);
-    onClose();
+    if (passphrase.length < 8) {
+      setStatus({
+        text: "Use a passphrase of at least 8 characters.",
+        tone: "error",
+      });
+      return;
+    }
+    if (passphrase !== confirmPassphrase) {
+      setStatus({ text: "The two passphrases don't match.", tone: "error" });
+      return;
+    }
+
+    setSaving(true);
+    setStatus({ text: "Encrypting…", tone: "muted" });
+    try {
+      await saveSettings(next, passphrase);
+      onClose();
+    } catch {
+      setStatus({ text: "Couldn't save these details.", tone: "error" });
+      setSaving(false);
+    }
   };
 
   return (
-    <Modal open={open} onClose={forced ? undefined : attemptClose} title="Setup">
+    <Modal open={open} onClose={forced ? undefined : onClose} title="Project setup">
       <div className="mb-4 rounded-lg border border-warn-border bg-warn-bg px-3.5 py-3 text-[13px] text-warn-text">
-        These keys connect this page to your Supabase project and Cloudinary account. They're
-        saved only in this browser's local storage on this laptop — enter them once and this
-        screen won't show again.
+        These details connect this page to your Supabase project and Cloudinary
+        account. They&rsquo;re encrypted with your passphrase and kept in this
+        browser only &mdash; never uploaded, and not readable without it.
       </div>
 
       <div className="mb-4">
-        <label className="field-label">Supabase Project URL</label>
+        <label className="field-label">Supabase project URL</label>
         <input
           className="text-input"
           placeholder="https://YOUR-PROJECT-REF.supabase.co"
@@ -62,47 +84,76 @@ export default function SettingsModal({ open, onClose, forced }) {
       </div>
 
       <div className="mb-4">
-        <label className="field-label">Supabase Anon / Publishable Key</label>
+        <label className="field-label">Supabase publishable key</label>
         <input
           className="text-input"
-          placeholder="eyJhbGciOi... (from Supabase → Project Settings → API)"
+          placeholder="sb_publishable_… (Project Settings → API Keys)"
           value={form.supabaseKey || ""}
           onChange={set("supabaseKey")}
         />
       </div>
 
       <div className="mb-4">
-        <label className="field-label">Cloudinary Cloud Name</label>
+        <label className="field-label">Cloudinary cloud name</label>
         <input
           className="text-input"
-          placeholder="e.g. my-cloud-name"
           value={form.cloudName || ""}
           onChange={set("cloudName")}
         />
       </div>
 
-      <div className="mb-4">
-        <label className="field-label">Cloudinary Unsigned Upload Preset</label>
+      <div className="mb-5">
+        <label className="field-label">Cloudinary unsigned upload preset</label>
         <input
           className="text-input"
-          placeholder="e.g. catalog_uploads"
           value={form.uploadPreset || ""}
           onChange={set("uploadPreset")}
         />
         <p className="field-hint">
-          Create this under Cloudinary → Settings → Upload → Upload presets → Signing Mode:
+          Cloudinary → Settings → Upload → Upload presets → Signing mode:
           Unsigned.
         </p>
+      </div>
+
+      <div className="mb-4 border-t border-border pt-4">
+        <label className="field-label">
+          {vaultExists ? "New passphrase" : "Choose a passphrase"}
+        </label>
+        <input
+          type="password"
+          className="text-input"
+          autoComplete="new-password"
+          value={passphrase}
+          onChange={(event) => setPassphrase(event.target.value)}
+        />
+        <p className="field-hint">
+          You&rsquo;ll enter this each time you open the admin panel. It
+          isn&rsquo;t stored anywhere, so it can&rsquo;t be recovered &mdash;
+          if you forget it, you&rsquo;ll re-enter the details above.
+        </p>
+      </div>
+
+      <div className="mb-4">
+        <label className="field-label">Confirm passphrase</label>
+        <input
+          type="password"
+          className="text-input"
+          autoComplete="new-password"
+          value={confirmPassphrase}
+          onChange={(event) => setConfirmPassphrase(event.target.value)}
+        />
       </div>
 
       <StatusMessage tone={status.tone}>{status.text}</StatusMessage>
 
       <div className="mt-5 flex justify-end gap-2.5 border-t border-border pt-4">
-        <button type="button" className="btn-secondary" onClick={attemptClose}>
-          Cancel
-        </button>
-        <button type="button" className="btn" onClick={handleSave}>
-          Save & continue
+        {!forced && (
+          <button type="button" className="btn-secondary" onClick={onClose}>
+            Cancel
+          </button>
+        )}
+        <button type="button" className="btn" onClick={handleSave} disabled={saving}>
+          {saving ? "Saving…" : "Save & continue"}
         </button>
       </div>
     </Modal>

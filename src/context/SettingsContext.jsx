@@ -1,49 +1,74 @@
-import { createContext, useContext, useState, useCallback, useMemo } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
+import { clearVault, hasVault, openVault, saveVault } from "../lib/vault";
 
-const SETTINGS_KEY = "catalog_admin_settings";
-
-// Baked-in fallback values, read from build-time env vars. These are only
-// used the very first time the app runs, before the user saves their own
-// values from the Settings screen (which are then kept in localStorage).
-const DEFAULT_SETTINGS = {
-  supabaseUrl: import.meta.env.VITE_SUPABASE_URL || "",
-  supabaseKey: import.meta.env.VITE_SUPABASE_ANON_KEY || "",
-  cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "",
-  uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || "",
+const EMPTY_SETTINGS = {
+  supabaseUrl: "",
+  supabaseKey: "",
+  cloudName: "",
+  uploadPreset: "",
 };
-
-function readStoredSettings() {
-  try {
-    const raw = localStorage.getItem(SETTINGS_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
 
 const SettingsContext = createContext(null);
 
+/**
+ * Holds the project credentials for the session. Nothing is read from build
+ * time env vars: this app ships as a template, and the owner enters their
+ * own details once. They are stored encrypted under a passphrase that is
+ * never persisted (see lib/vault.js).
+ */
 export function SettingsProvider({ children }) {
-  const [settings, setSettings] = useState(
-    () => readStoredSettings() || DEFAULT_SETTINGS
-  );
+  const [settings, setSettings] = useState(EMPTY_SETTINGS);
+  const [unlocked, setUnlocked] = useState(false);
+  const [vaultExists, setVaultExists] = useState(() => hasVault());
 
-  const saveSettings = useCallback((next) => {
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(next));
+  const unlock = useCallback(async (passphrase) => {
+    const stored = await openVault(passphrase);
+    if (!stored) return false;
+    setSettings(stored);
+    setUnlocked(true);
+    return true;
+  }, []);
+
+  const saveSettings = useCallback(async (next, passphrase) => {
+    await saveVault(next, passphrase);
     setSettings(next);
+    setUnlocked(true);
+    setVaultExists(true);
+  }, []);
+
+  const forget = useCallback(() => {
+    clearVault();
+    setSettings(EMPTY_SETTINGS);
+    setUnlocked(false);
+    setVaultExists(false);
   }, []);
 
   const isConfigured = useMemo(
     () => Boolean(settings.supabaseUrl && settings.supabaseKey),
-    [settings]
+    [settings],
   );
 
   const isCloudinaryConfigured = useMemo(
     () => Boolean(settings.cloudName && settings.uploadPreset),
-    [settings]
+    [settings],
   );
 
-  const value = { settings, saveSettings, isConfigured, isCloudinaryConfigured };
+  const value = {
+    settings,
+    saveSettings,
+    unlock,
+    forget,
+    unlocked,
+    vaultExists,
+    isConfigured,
+    isCloudinaryConfigured,
+  };
 
   return (
     <SettingsContext.Provider value={value}>

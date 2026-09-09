@@ -28,25 +28,28 @@ src/
 
 ```bash
 npm install
-cp .env.example .env   # then fill in your real Supabase + Cloudinary values
 npm run dev
 ```
 
-`.env` values are just the **baked-in defaults** shown the first time the
-app loads. If you'd rather configure it entirely from the UI, leave `.env`
-blank — the app will open the Settings screen (gear icon) automatically and
-save whatever you enter there to `localStorage`, exactly like the original
-page did.
+No `.env` is needed. The app ships as a template: on first run it asks for
+your Supabase and Cloudinary details plus a passphrase, encrypts them with
+AES-GCM (WebCrypto, PBKDF2-derived key) and keeps them in that browser's
+local storage only. The passphrase is never stored, so the details cannot be
+read without it — and nothing is baked into the deployed bundle.
 
-**Never commit your real `.env`** — it's already in `.gitignore`. If your
-old `admin-3.html` had a real Supabase key hardcoded in it, treat that key
-as public now and consider rotating it in Supabase (Project Settings → API).
+You'll be asked for the passphrase each time you open the panel. If you
+forget it, clear it from the unlock screen and re-enter the project details.
+
+## Access
+
+Writes to the catalog are restricted to signed-in users by row level
+security, so you also need a Supabase account:
+Supabase → Authentication → Users → Add user (tick *Auto Confirm User*).
 
 ## Database
 
-Expects a Supabase table named `catelog` (this matches the table name in
-the original app — rename it in `src/lib/supabaseClient.js` if you fix the
-typo in your database) with columns: `Title`, `Category`, `Price`, `Tag`,
+Expects a Supabase table named `products`
+with columns: `Title`, `Category`, `Price`, `Tag`,
 `Description`, `Featured`, `Image URL` (array), `Supported RAMs` (array),
 `Supported Processors` (array), `Supported Storage` (array).
 

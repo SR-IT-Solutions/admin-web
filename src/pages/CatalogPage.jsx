@@ -6,14 +6,18 @@ import EmptyState from "../components/products/EmptyState";
 import ProductFormModal from "../components/products/ProductFormModal";
 import ProductViewModal from "../components/products/ProductViewModal";
 import SettingsModal from "../components/settings/SettingsModal";
+import LoginScreen from "../components/auth/LoginScreen";
+import UnlockScreen from "../components/settings/UnlockScreen";
 import { useSettings } from "../context/SettingsContext";
+import { useAuth } from "../context/AuthContext";
 import { useProducts } from "../hooks/useProducts";
 
 export default function CatalogPage() {
-  const { isConfigured } = useSettings();
+  const { isConfigured, vaultExists, unlocked, forget } = useSettings();
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const { products, status, error, save, remove } = useProducts();
 
-  const [settingsOpen, setSettingsOpen] = useState(!isConfigured);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [formProduct, setFormProduct] = useState(undefined); // undefined = closed, null = add, object = edit
   const [viewProduct, setViewProduct] = useState(null);
 
@@ -48,6 +52,31 @@ export default function CatalogPage() {
       />
     );
   };
+
+  // 1. Credentials exist but this session hasn't decrypted them yet.
+  if (vaultExists && !unlocked) {
+    return <UnlockScreen onForget={forget} />;
+  }
+
+  // 2. First run on this browser: collect the project details.
+  if (!vaultExists) {
+    return (
+      <SettingsModal open forced onClose={() => setSettingsOpen(false)} />
+    );
+  }
+
+  // 3. Supabase must be configured before we can attempt a sign-in.
+  if (isConfigured && authLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-[13px] text-muted">
+        Loading…
+      </div>
+    );
+  }
+
+  if (isConfigured && !isAuthenticated) {
+    return <LoginScreen />;
+  }
 
   return (
     <div>

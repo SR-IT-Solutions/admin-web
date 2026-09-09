@@ -11,10 +11,17 @@ export function getSupabaseClient(settings) {
   const key = `${settings.supabaseUrl}::${settings.supabaseKey}`;
   if (!settings.supabaseUrl || !settings.supabaseKey) return null;
   if (!client || key !== clientKey) {
-    client = createClient(settings.supabaseUrl, settings.supabaseKey);
+    client = createClient(settings.supabaseUrl, settings.supabaseKey, {
+      auth: {
+        // Keep the admin signed in across reloads; RLS grants writes only
+        // to the `authenticated` role.
+        persistSession: true,
+        autoRefreshToken: true,
+      },
+    });
     clientKey = key;
   }
   return client;
 }
 
-export const PRODUCTS_TABLE = "catelog";
+export const PRODUCTS_TABLE = "products";

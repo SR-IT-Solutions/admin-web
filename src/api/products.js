@@ -1,7 +1,7 @@
 import { PRODUCTS_TABLE } from "../lib/supabaseClient";
 
 /**
- * Thin data-access layer around the "catelog" Supabase table. Every
+ * Thin data-access layer around the "products" Supabase table. Every
  * function takes an already-constructed Supabase client so callers
  * control when/how that client is created (see SettingsContext).
  */
@@ -36,7 +36,7 @@ export function toPayload(form) {
   return {
     Title: form.Title.trim(),
     Category: form.Category,
-    Price: parseFloat(form.Price),
+    Price: Number.isFinite(parseFloat(form.Price)) ? parseFloat(form.Price) : null,
     Tag: form.Tag.trim(),
     Description: form.Description.trim(),
     Featured: form.Featured ? "true" : "false",

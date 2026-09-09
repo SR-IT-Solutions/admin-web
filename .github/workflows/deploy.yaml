@@ -34,6 +34,11 @@ jobs:
         run: npm ci
 
       - name: Build project
+        # Deliberately builds with NO credentials. The admin panel is a
+        # template: the owner enters the Supabase and Cloudinary details in
+        # the Settings screen once, and they are kept in that browser only.
+        # The Cloudinary unsigned upload preset in particular must never be
+        # baked into a public bundle — anyone holding it can upload.
         run: npm run build
 
       - name: Upload build artifact
