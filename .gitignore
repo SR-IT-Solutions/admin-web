@@ -41,3 +41,5 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+# Local credential reference — never commit
+CREDENTIALS.local.md
