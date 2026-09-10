@@ -18,6 +18,13 @@ function loadWidgetScript() {
   return loadPromise;
 }
 
+// A single widget instance is reused across opens. Creating a new one on every
+// click leaves the previous widget mounted, so the user has to dismiss each
+// stacked copy in turn.
+let widget = null;
+let widgetKey = null;
+let handleUpload = () => {};
+
 /**
  * Opens the Cloudinary unsigned upload widget and resolves with the
  * secure URL of each successfully uploaded image.
@@ -25,19 +32,30 @@ function loadWidgetScript() {
 export async function openUploadWidget({ cloudName, uploadPreset, onUpload }) {
   await loadWidgetScript();
 
-  const widget = window.cloudinary.createUploadWidget(
-    {
-      cloudName,
-      uploadPreset,
-      multiple: true,
-      sources: ["local", "camera", "url"],
-    },
-    (error, result) => {
-      if (!error && result && result.event === "success") {
-        onUpload(result.info.secure_url);
+  handleUpload = onUpload;
+
+  const key = `${cloudName}:${uploadPreset}`;
+  if (widget && widgetKey !== key) {
+    widget.destroy();
+    widget = null;
+  }
+
+  if (!widget) {
+    widgetKey = key;
+    widget = window.cloudinary.createUploadWidget(
+      {
+        cloudName,
+        uploadPreset,
+        multiple: true,
+        sources: ["local", "camera", "url"],
+      },
+      (error, result) => {
+        if (!error && result && result.event === "success") {
+          handleUpload(result.info.secure_url);
+        }
       }
-    }
-  );
+    );
+  }
 
   widget.open();
 }
