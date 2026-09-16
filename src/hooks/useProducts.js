@@ -6,7 +6,7 @@ import * as productsApi from "../api/products";
 export function useProducts() {
   const { settings, isConfigured } = useSettings();
   const [products, setProducts] = useState([]);
-  const [status, setStatus] = useState("idle"); // idle | loading | error | ready
+  const [status, setStatus] = useState("idle");
   const [error, setError] = useState("");
 
   const client = isConfigured ? getSupabaseClient(settings) : null;
@@ -29,17 +29,14 @@ export function useProducts() {
     load();
   }, [load]);
 
-  const save = useCallback(
-    async (form, editingId) => {
-      const payload = productsApi.toPayload(form);
-      if (editingId) {
-        await productsApi.updateProduct(client, editingId, payload);
-      } else {
-        await productsApi.createProduct(client, payload);
-      }
-      await load();
+  const setActive = useCallback(
+    async (id, isActive) => {
+      const saved = await productsApi.setProductActive(client, id, isActive);
+      setProducts((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, is_active: saved.is_active } : p))
+      );
     },
-    [client, load]
+    [client]
   );
 
   const remove = useCallback(
@@ -50,5 +47,5 @@ export function useProducts() {
     [client, load]
   );
 
-  return { products, status, error, reload: load, save, remove };
+  return { products, status, error, reload: load, remove, setActive };
 }

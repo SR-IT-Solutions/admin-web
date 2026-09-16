@@ -16,7 +16,7 @@ export default function LoginScreen() {
     setStatus({ text: "Signing in…", tone: "muted" });
     try {
       await signIn(email.trim(), password);
-      // On success the session listener swaps this screen out.
+      window.location.reload();
     } catch (err) {
       setStatus({
         text: err.message || "Couldn't sign in. Check your email and password.",
@@ -34,14 +34,20 @@ export default function LoginScreen() {
             <Lock size={16} />
           </div>
           <div>
-            <h1 className="text-[17px] font-semibold leading-none">Catalog Admin</h1>
-            <p className="mt-1 text-[13px] text-muted">Sign in to manage products</p>
+            <h1 className="text-[17px] font-semibold leading-none">
+              Catalog Admin
+            </h1>
+            <p className="mt-1 text-[13px] text-muted">
+              Sign in to manage products
+            </p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="field-label" htmlFor="admin-email">Email</label>
+            <label className="field-label" htmlFor="admin-email">
+              Email
+            </label>
             <input
               id="admin-email"
               type="email"
@@ -54,7 +60,9 @@ export default function LoginScreen() {
           </div>
 
           <div className="mb-4">
-            <label className="field-label" htmlFor="admin-password">Password</label>
+            <label className="field-label" htmlFor="admin-password">
+              Password
+            </label>
             <input
               id="admin-password"
               type="password"
@@ -68,7 +76,11 @@ export default function LoginScreen() {
 
           <StatusMessage tone={status.tone}>{status.text}</StatusMessage>
 
-          <button type="submit" className="btn mt-4 w-full justify-center" disabled={busy}>
+          <button
+            type="submit"
+            className="btn mt-4 w-full justify-center"
+            disabled={busy}
+          >
             {busy ? "Signing in…" : "Sign in"}
           </button>
         </form>

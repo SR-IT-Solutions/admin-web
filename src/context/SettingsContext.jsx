@@ -16,12 +16,6 @@ const EMPTY_SETTINGS = {
 
 const SettingsContext = createContext(null);
 
-/**
- * Holds the project credentials for the session. Nothing is read from build
- * time env vars: this app ships as a template, and the owner enters their
- * own details once. They are stored encrypted under a passphrase that is
- * never persisted (see lib/vault.js).
- */
 export function SettingsProvider({ children }) {
   const [settings, setSettings] = useState(EMPTY_SETTINGS);
   const [unlocked, setUnlocked] = useState(false);

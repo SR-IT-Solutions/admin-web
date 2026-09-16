@@ -1,4 +1,5 @@
 import Modal from "../ui/Modal";
+import { categoryHasSpecs } from "../../constants/options";
 
 function ChipList({ values }) {
   if (!values || values.length === 0) {
@@ -55,9 +56,17 @@ export default function ProductViewModal({ open, product, onClose, onEdit }) {
         </div>
       </div>
 
-      <div className="mb-4">
-        <label className="field-label">Featured</label>
-        <div className="text-[14px]">{isFeatured ? "Yes" : "No"}</div>
+      <div className="mb-4 grid grid-cols-2 gap-3.5">
+        <div>
+          <label className="field-label">Featured</label>
+          <div className="text-[14px]">{isFeatured ? "Yes" : "No"}</div>
+        </div>
+        <div>
+          <label className="field-label">Status</label>
+          <div className="text-[14px]">
+            {product.is_active === false ? "Inactive" : "Active"}
+          </div>
+        </div>
       </div>
 
       <div className="mb-4">
@@ -67,20 +76,24 @@ export default function ProductViewModal({ open, product, onClose, onEdit }) {
         </div>
       </div>
 
-      <div className="mb-4">
-        <label className="field-label">Supported RAMs</label>
-        <ChipList values={product["Supported RAMs"]} />
-      </div>
+      {categoryHasSpecs(product.Category) && (
+        <>
+          <div className="mb-4">
+            <label className="field-label">Supported RAMs</label>
+            <ChipList values={product["Supported RAMs"]} />
+          </div>
 
-      <div className="mb-4">
-        <label className="field-label">Supported Processors</label>
-        <ChipList values={product["Supported Processors"]} />
-      </div>
+          <div className="mb-4">
+            <label className="field-label">Supported Processors</label>
+            <ChipList values={product["Supported Processors"]} />
+          </div>
 
-      <div className="mb-4">
-        <label className="field-label">Supported Storage</label>
-        <ChipList values={product["Supported Storage"]} />
-      </div>
+          <div className="mb-4">
+            <label className="field-label">Supported Storage</label>
+            <ChipList values={product["Supported Storage"]} />
+          </div>
+        </>
+      )}
 
       <div className="mt-5 flex justify-end gap-2.5 border-t border-border pt-4">
         <button type="button" className="btn-secondary" onClick={onClose}>

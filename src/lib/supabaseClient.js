@@ -3,18 +3,12 @@ import { createClient } from "@supabase/supabase-js";
 let client = null;
 let clientKey = "";
 
-/**
- * Returns a memoized Supabase client, recreating it only when the
- * URL/key pair actually changes (e.g. after the user edits Settings).
- */
 export function getSupabaseClient(settings) {
   const key = `${settings.supabaseUrl}::${settings.supabaseKey}`;
   if (!settings.supabaseUrl || !settings.supabaseKey) return null;
   if (!client || key !== clientKey) {
     client = createClient(settings.supabaseUrl, settings.supabaseKey, {
       auth: {
-        // Keep the admin signed in across reloads; RLS grants writes only
-        // to the `authenticated` role.
         persistSession: true,
         autoRefreshToken: true,
       },

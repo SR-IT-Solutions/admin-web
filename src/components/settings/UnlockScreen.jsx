@@ -47,7 +47,10 @@ export default function UnlockScreen({ onForget }) {
             id="vault-passphrase"
             type="password"
             className="text-input"
-            autoComplete="current-password"
+            autoComplete="off"
+            data-bwignore="true"
+            data-1p-ignore="true"
+            data-lpignore="true"
             autoFocus
             required
             value={passphrase}

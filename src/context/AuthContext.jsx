@@ -4,11 +4,6 @@ import { getSupabaseClient } from "../lib/supabaseClient";
 
 const AuthContext = createContext(null);
 
-/**
- * Tracks the Supabase auth session. Writes to `products` are restricted to
- * the `authenticated` role by RLS, so an admin must sign in before the
- * catalog can be edited.
- */
 export function AuthProvider({ children }) {
   const { settings, isConfigured } = useSettings();
   const [session, setSession] = useState(null);

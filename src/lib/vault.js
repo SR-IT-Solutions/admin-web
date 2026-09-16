@@ -1,17 +1,6 @@
-/**
- * Passphrase-encrypted storage for the project credentials.
- *
- * The passphrase is never written anywhere — it is held in memory for the
- * session and used to derive an AES-GCM key via PBKDF2. That is what makes
- * this real: someone with access to this browser profile still cannot read
- * the Cloudinary upload preset or the Supabase key without the passphrase.
- *
- * A fresh random salt and IV are generated on every save, so the same
- * settings never encrypt to the same ciphertext twice.
- */
 
 const VAULT_KEY = "catalog_admin_vault";
-const PBKDF2_ITERATIONS = 310_000; // OWASP guidance for PBKDF2-SHA256
+const PBKDF2_ITERATIONS = 310_000;
 const SALT_BYTES = 16;
 const IV_BYTES = 12;
 
@@ -46,7 +35,6 @@ async function deriveKey(passphrase, salt) {
   );
 }
 
-/** True once the owner has saved settings on this browser. */
 export function hasVault() {
   return Boolean(localStorage.getItem(VAULT_KEY));
 }
@@ -77,10 +65,6 @@ export async function saveVault(settings, passphrase) {
   );
 }
 
-/**
- * Returns the decrypted settings, or null when the passphrase is wrong —
- * AES-GCM authentication fails rather than yielding garbage.
- */
 export async function openVault(passphrase) {
   const raw = localStorage.getItem(VAULT_KEY);
   if (!raw) return null;

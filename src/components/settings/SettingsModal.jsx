@@ -122,7 +122,10 @@ export default function SettingsModal({ open, onClose, forced }) {
         <input
           type="password"
           className="text-input"
-          autoComplete="new-password"
+          autoComplete="off"
+          data-bwignore="true"
+          data-1p-ignore="true"
+          data-lpignore="true"
           value={passphrase}
           onChange={(event) => setPassphrase(event.target.value)}
         />
@@ -138,7 +141,10 @@ export default function SettingsModal({ open, onClose, forced }) {
         <input
           type="password"
           className="text-input"
-          autoComplete="new-password"
+          autoComplete="off"
+          data-bwignore="true"
+          data-1p-ignore="true"
+          data-lpignore="true"
           value={confirmPassphrase}
           onChange={(event) => setConfirmPassphrase(event.target.value)}
         />

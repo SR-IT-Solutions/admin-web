@@ -1,24 +1,16 @@
 import { useState } from "react";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { Plus } from "lucide-react";
-import Header from "../components/layout/Header";
 import ProductTable from "../components/products/ProductTable";
 import EmptyState from "../components/products/EmptyState";
-import ProductFormModal from "../components/products/ProductFormModal";
 import ProductViewModal from "../components/products/ProductViewModal";
-import SettingsModal from "../components/settings/SettingsModal";
-import LoginScreen from "../components/auth/LoginScreen";
-import UnlockScreen from "../components/settings/UnlockScreen";
-import { useSettings } from "../context/SettingsContext";
-import { useAuth } from "../context/AuthContext";
 import { useProducts } from "../hooks/useProducts";
 
 export default function CatalogPage() {
-  const { isConfigured, vaultExists, unlocked, forget } = useSettings();
-  const { isAuthenticated, loading: authLoading } = useAuth();
-  const { products, status, error, save, remove } = useProducts();
+  const { isConfigured } = useOutletContext();
+  const { products, status, error, remove, setActive } = useProducts();
+  const navigate = useNavigate();
 
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [formProduct, setFormProduct] = useState(undefined); // undefined = closed, null = add, object = edit
   const [viewProduct, setViewProduct] = useState(null);
 
   const handleDelete = async (product) => {
@@ -30,9 +22,21 @@ export default function CatalogPage() {
     }
   };
 
+  const handleToggleActive = async (product) => {
+    try {
+      await setActive(product.id, product.is_active === false);
+    } catch (err) {
+      alert("Couldn't update status: " + (err.message || "unknown error"));
+    }
+  };
+
   const renderBody = () => {
     if (!isConfigured) {
-      return <EmptyState>Add your Supabase details in Settings to get started.</EmptyState>;
+      return (
+        <EmptyState>
+          Add your Supabase details in Settings to get started.
+        </EmptyState>
+      );
     }
     if (status === "loading" || status === "idle") {
       return <EmptyState>Loading…</EmptyState>;
@@ -41,74 +45,47 @@ export default function CatalogPage() {
       return <EmptyState>Couldn't load products: {error}</EmptyState>;
     }
     if (products.length === 0) {
-      return <EmptyState>No products yet. Click &ldquo;Add product&rdquo; to create your first one.</EmptyState>;
+      return (
+        <EmptyState>
+          No products yet. Click &ldquo;New Product&rdquo; to create your first
+          one.
+        </EmptyState>
+      );
     }
     return (
       <ProductTable
         products={products}
         onView={setViewProduct}
-        onEdit={(p) => setFormProduct(p)}
+        onEdit={(p) => navigate(`/admin-web/products/${p.id}`)}
         onDelete={handleDelete}
+        onToggleActive={handleToggleActive}
       />
     );
   };
 
-  // 1. Credentials exist but this session hasn't decrypted them yet.
-  if (vaultExists && !unlocked) {
-    return <UnlockScreen onForget={forget} />;
-  }
-
-  // 2. First run on this browser: collect the project details.
-  if (!vaultExists) {
-    return (
-      <SettingsModal open forced onClose={() => setSettingsOpen(false)} />
-    );
-  }
-
-  // 3. Supabase must be configured before we can attempt a sign-in.
-  if (isConfigured && authLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center text-[13px] text-muted">
-        Loading…
-      </div>
-    );
-  }
-
-  if (isConfigured && !isAuthenticated) {
-    return <LoginScreen />;
-  }
-
   return (
     <div>
-      <Header onOpenSettings={() => setSettingsOpen(true)} />
-
-      <main className="mx-auto max-w-[1080px] px-8 pb-20 pt-7">
-        <div className="mb-[18px] flex items-center justify-between">
-          <div className="text-[13px] text-muted">
-            {status === "ready" && products.length > 0
-              ? `${products.length} product${products.length === 1 ? "" : "s"}`
-              : ""}
+      <header className="sticky top-0 z-30 border-b border-border bg-panel px-8 py-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-[19px] font-semibold leading-none">Products</h2>
+            <div className="mt-1 text-[13px] text-muted">
+              {status === "ready" && products.length > 0
+                ? `${products.length} product${products.length === 1 ? "" : "s"} in the catalog`
+                : "Manage your product catalog"}
+            </div>
           </div>
-          <button type="button" className="btn" onClick={() => setFormProduct(null)}>
-            <Plus size={15} /> Add product
+          <button
+            type="button"
+            className="btn"
+            onClick={() => navigate("/admin-web/products/new")}
+          >
+            <Plus size={15} /> New Product
           </button>
         </div>
+      </header>
 
-        {renderBody()}
-      </main>
-
-      <SettingsModal
-        open={settingsOpen}
-        forced={!isConfigured}
-        onClose={() => setSettingsOpen(false)}
-      />
-
-      <ProductFormModal
-        open={formProduct !== undefined}
-        product={formProduct}
-        onClose={() => setFormProduct(undefined)}
-        onSave={save}
-      />
+      <main className="px-8 pb-20 pt-7">{renderBody()}</main>
 
       <ProductViewModal
         open={Boolean(viewProduct)}
@@ -117,7 +94,7 @@ export default function CatalogPage() {
         onEdit={() => {
           const p = viewProduct;
           setViewProduct(null);
-          setFormProduct(p);
+          navigate(`/admin-web/products/${p.id}`);
         }}
       />
     </div>

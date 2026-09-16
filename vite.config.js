@@ -7,5 +7,6 @@ export default defineConfig({
   base: "/admin-web/",
   server: {
     port: 5173,
+    strictPort: true,
   },
 });
