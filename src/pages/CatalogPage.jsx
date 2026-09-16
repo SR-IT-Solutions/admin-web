@@ -65,8 +65,8 @@ export default function CatalogPage() {
 
   return (
     <div>
-      <header className="sticky top-0 z-30 border-b border-border bg-panel px-8 py-5">
-        <div className="flex items-center justify-between">
+      <header className="sticky top-[57px] z-30 border-b border-border bg-panel px-4 py-4 md:top-0 md:px-8 md:py-5">
+        <div className="flex items-center justify-between gap-3">
           <div>
             <h2 className="text-[19px] font-semibold leading-none">Products</h2>
             <div className="mt-1 text-[13px] text-muted">
@@ -80,12 +80,13 @@ export default function CatalogPage() {
             className="btn"
             onClick={() => navigate("/admin-web/products/new")}
           >
-            <Plus size={15} /> New Product
+            <Plus size={15} />
+            <span className="hidden sm:inline">New Product</span>
           </button>
         </div>
       </header>
 
-      <main className="px-8 pb-20 pt-7">{renderBody()}</main>
+      <main className="px-4 pb-20 pt-5 md:px-8 md:pt-7">{renderBody()}</main>
 
       <ProductViewModal
         open={Boolean(viewProduct)}

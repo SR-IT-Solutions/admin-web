@@ -2,6 +2,7 @@ export const CATEGORY_OPTIONS = [
   "Mini PCs",
   "Laptop",
   "Workstation",
+  "Computers",
   "CCTV",
   "Printers",
   "Accessories",
@@ -13,7 +14,12 @@ export const SPEC_FIELDS = [
   "Supported Storage",
 ];
 
-const CATEGORIES_WITH_SPECS = ["Mini PCs", "Laptop", "Workstation"];
+const CATEGORIES_WITH_SPECS = [
+  "Mini PCs",
+  "Laptop",
+  "Workstation",
+  "Computers",
+];
 
 export function categoryHasSpecs(category) {
   return CATEGORIES_WITH_SPECS.includes(category);

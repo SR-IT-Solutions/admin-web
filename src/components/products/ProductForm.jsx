@@ -21,7 +21,7 @@ function toFormState(product) {
     Price: product.Price ?? "",
     Tag: product.Tag || "",
     Description: product.Description || "",
-    Featured: product.Featured === "true" || product.Featured === true,
+    Featured: product.Featured === true,
     is_active: product.is_active !== false,
     "Image URL": Array.isArray(product["Image URL"])
       ? [...product["Image URL"]]
@@ -78,7 +78,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
         />
       </div>
 
-      <div className="mb-4 grid grid-cols-2 gap-3.5">
+      <div className="mb-4 grid grid-cols-1 gap-3.5 sm:grid-cols-2">
         <div>
           <label className="field-label">Category</label>
           <select
@@ -106,7 +106,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
         </div>
       </div>
 
-      <div className="mb-4 grid grid-cols-2 gap-3.5">
+      <div className="mb-4 grid grid-cols-1 gap-3.5 sm:grid-cols-2">
         <div>
           <label className="field-label">Tag</label>
           <input
@@ -118,7 +118,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
         </div>
         <div>
           <label className="field-label">Featured</label>
-          <label className="flex h-[38px] items-center gap-2 text-[13px]">
+          <label className="flex h-9.5 items-center gap-2 text-[13px]">
             <input
               type="checkbox"
               className="h-3.5 w-3.5 accent-accent"
@@ -132,7 +132,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
 
       <div className="mb-4">
         <label className="field-label">Status</label>
-        <div className="flex h-[38px] items-center gap-2.5">
+        <div className="flex h-9.5 items-center gap-2.5">
           <Toggle
             checked={form.is_active}
             onChange={set("is_active")}
@@ -152,7 +152,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
       <div className="mb-4">
         <label className="field-label">Description</label>
         <textarea
-          className="text-input min-h-[70px] resize-y"
+          className="text-input min-h-17.5 resize-y"
           value={form.Description}
           onChange={(e) => set("Description")(e.target.value)}
         />

@@ -20,7 +20,7 @@ export default function ProductViewModal({ open, product, onClose, onEdit }) {
   if (!product) return null;
 
   const images = Array.isArray(product["Image URL"]) ? product["Image URL"] : [];
-  const isFeatured = product.Featured === "true" || product.Featured === true;
+  const isFeatured = product.Featured === true;
   const price =
     product.Price != null
       ? "₹" + Number(product.Price).toLocaleString("en-IN", { minimumFractionDigits: 2 })
@@ -45,7 +45,7 @@ export default function ProductViewModal({ open, product, onClose, onEdit }) {
         <div>{product.Category ? <span className="tag-pill">{product.Category}</span> : "—"}</div>
       </div>
 
-      <div className="mb-4 grid grid-cols-2 gap-3.5">
+      <div className="mb-4 grid grid-cols-1 gap-3.5 sm:grid-cols-2">
         <div>
           <label className="field-label">Price</label>
           <div className="text-[14px]">{price}</div>
@@ -56,7 +56,7 @@ export default function ProductViewModal({ open, product, onClose, onEdit }) {
         </div>
       </div>
 
-      <div className="mb-4 grid grid-cols-2 gap-3.5">
+      <div className="mb-4 grid grid-cols-1 gap-3.5 sm:grid-cols-2">
         <div>
           <label className="field-label">Featured</label>
           <div className="text-[14px]">{isFeatured ? "Yes" : "No"}</div>

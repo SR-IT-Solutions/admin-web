@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
+import { MobileTopBar, MobileBottomNav } from "./MobileNav";
 import SettingsModal from "../settings/SettingsModal";
 import LoginScreen from "../auth/LoginScreen";
 import UnlockScreen from "../settings/UnlockScreen";
@@ -35,10 +36,13 @@ export default function AdminLayout() {
   return (
     <div className="min-h-screen">
       <Sidebar onOpenSettings={() => setSettingsOpen(true)} />
+      <MobileTopBar onOpenSettings={() => setSettingsOpen(true)} />
 
-      <div className="pl-[230px]">
+      <div className="pb-16 md:pb-0 md:pl-57.5">
         <Outlet context={{ isConfigured }} />
       </div>
+
+      <MobileBottomNav />
 
       <SettingsModal
         open={settingsOpen}

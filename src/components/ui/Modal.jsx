@@ -5,13 +5,13 @@ export default function Modal({ open, onClose, title, children, wide = false }) 
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#14120e]/40 px-4 py-10"
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#14120e]/40 px-3 py-4 sm:px-4 sm:py-10"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose?.();
       }}
     >
       <div
-        className={`w-full rounded-xl border border-border bg-panel p-7 ${
+        className={`w-full rounded-xl border border-border bg-panel p-5 sm:p-7 ${
           wide ? "max-w-2xl" : "max-w-xl"
         }`}
       >

@@ -8,7 +8,8 @@ export default function ProductTable({
   onToggleActive,
 }) {
   return (
-    <table className="w-full overflow-hidden rounded-lg border border-border bg-panel">
+    <div className="-mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
+    <table className="w-full min-w-180 overflow-hidden rounded-lg border border-border bg-panel">
       <thead>
         <tr className="bg-[#fbfaf8]">
           <th className="p-3.5 text-left text-[12.5px] font-semibold text-muted"></th>
@@ -43,5 +44,6 @@ export default function ProductTable({
         ))}
       </tbody>
     </table>
+    </div>
   );
 }

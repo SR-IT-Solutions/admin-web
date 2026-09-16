@@ -69,7 +69,7 @@ export function toPayload(form) {
       : null,
     Tag: form.Tag.trim(),
     Description: form.Description.trim(),
-    Featured: form.Featured ? "true" : "false",
+    Featured: Boolean(form.Featured),
     is_active: Boolean(form.is_active),
     "Image URL": form["Image URL"],
     "Supported RAMs": form["Supported RAMs"],

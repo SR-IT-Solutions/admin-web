@@ -20,7 +20,7 @@ export default function CheckboxGroups({ groups, selected, onChange }) {
         return (
           <div
             key={group.label}
-            className="w-[190px] shrink-0 border-r border-border/60 pr-4 last:border-r-0 last:pr-0"
+            className="w-40 shrink-0 sm:w-47.5 border-r border-border/60 pr-4 last:border-r-0 last:pr-0"
           >
             <div className="mb-1.5 flex items-center gap-2 border-b border-border/70 pb-1">
               <button
