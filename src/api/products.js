@@ -21,6 +21,30 @@ export async function fetchProduct(client, id) {
   return data;
 }
 
+export async function fetchImageLibrary(client) {
+  const { data, error } = await client
+    .from(PRODUCTS_TABLE)
+    .select('id, Title, "Image URL", created_at')
+    .not("Image URL", "is", null)
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+
+  const seen = new Set();
+  const library = [];
+
+  for (const row of data ?? []) {
+    const urls = Array.isArray(row["Image URL"]) ? row["Image URL"] : [];
+    for (const url of urls) {
+      if (!url || seen.has(url)) continue;
+      seen.add(url);
+      library.push({ url, usedBy: row.Title || "Untitled product" });
+    }
+  }
+
+  return library;
+}
+
 export async function createProduct(client, payload) {
   const { error } = await client.from(PRODUCTS_TABLE).insert([payload]);
   if (error) throw error;
