@@ -122,7 +122,7 @@ export default function EnquiriesPage() {
 
   return (
     <div>
-      <header className="sticky top-[57px] z-30 border-b border-border bg-panel px-4 py-4 md:top-0 md:px-8 md:py-5">
+      <header className="sticky top-14.25 z-30 border-b border-border bg-panel px-4 py-4 md:top-0 md:px-8 md:py-5">
         <div className="flex items-center justify-between gap-3">
           <div>
             <h2 className="text-[19px] font-semibold leading-none">

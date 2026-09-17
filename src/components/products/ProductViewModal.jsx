@@ -19,20 +19,33 @@ function ChipList({ values }) {
 export default function ProductViewModal({ open, product, onClose, onEdit }) {
   if (!product) return null;
 
-  const images = Array.isArray(product["Image URL"]) ? product["Image URL"] : [];
+  const images = Array.isArray(product["Image URL"])
+    ? product["Image URL"]
+    : [];
   const isFeatured = product.Featured === true;
   const price =
     product.Price != null
-      ? "₹" + Number(product.Price).toLocaleString("en-IN", { minimumFractionDigits: 2 })
+      ? "₹" +
+        Number(product.Price).toLocaleString("en-IN", {
+          minimumFractionDigits: 2,
+        })
       : "—";
 
   return (
-    <Modal open={open} onClose={onClose} title={product.Title || "Untitled product"}>
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={product.Title || "Untitled product"}
+    >
       <div className="mb-3 flex flex-wrap gap-2">
         {images.length ? (
           images.map((url) => (
-            <div key={url} className="h-[88px] w-[88px]">
-              <img src={url} alt="" className="h-full w-full rounded-md border border-border object-cover" />
+            <div key={url} className="h-22 w-22">
+              <img
+                src={url}
+                alt=""
+                className="h-full w-full rounded-md border border-border object-cover"
+              />
             </div>
           ))
         ) : (
@@ -42,7 +55,13 @@ export default function ProductViewModal({ open, product, onClose, onEdit }) {
 
       <div className="mb-4">
         <label className="field-label">Category</label>
-        <div>{product.Category ? <span className="tag-pill">{product.Category}</span> : "—"}</div>
+        <div>
+          {product.Category ? (
+            <span className="tag-pill">{product.Category}</span>
+          ) : (
+            "—"
+          )}
+        </div>
       </div>
 
       <div className="mb-4 grid grid-cols-1 gap-3.5 sm:grid-cols-2">
