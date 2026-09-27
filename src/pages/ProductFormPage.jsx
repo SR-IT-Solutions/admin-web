@@ -34,7 +34,7 @@ export default function ProductFormPage() {
 
   return (
     <div>
-      <header className="sticky top-14.25 z-30 border-b border-border bg-panel px-4 py-4 md:top-0 md:px-8 md:py-5">
+      <header className="sticky top-0 z-30 border-b border-border bg-panel px-4 py-4 md:top-0 md:px-8 md:py-5">
         <div className="flex items-center gap-3">
           <button
             type="button"

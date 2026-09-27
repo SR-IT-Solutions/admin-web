@@ -3,14 +3,17 @@ import { Images, Upload, X } from "lucide-react";
 import { useSettings } from "../../context/SettingsContext";
 import { openUploadWidget } from "../../lib/cloudinary";
 import ImagePickerModal from "./ImagePickerModal";
+import ImageLightbox from "../ui/ImageLightbox";
+import { thumbUrl } from "../../lib/imageUrl";
 
 export default function ImageUploader({ images, onChange }) {
   const { settings, isCloudinaryConfigured } = useSettings();
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [previewIndex, setPreviewIndex] = useState(null);
 
   const handleUpload = () => {
     if (!isCloudinaryConfigured) {
-      alert("Add your Cloudinary cloud name and upload preset in Settings (gear icon) first.");
+      alert("Add your Cloudinary cloud name and upload preset in Settings first.");
       return;
     }
     openUploadWidget({
@@ -33,7 +36,14 @@ export default function ImageUploader({ images, onChange }) {
       <div className="mb-2 flex flex-wrap gap-2">
         {images.map((url, i) => (
           <div key={url + i} className="relative h-16 w-16">
-            <img src={url} alt="" className="h-full w-full rounded-md border border-border object-cover" />
+            <button
+              type="button"
+              onClick={() => setPreviewIndex(i)}
+              aria-label={`Preview image ${i + 1}`}
+              className="h-full w-full overflow-hidden rounded-md border border-border transition hover:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+            >
+              <img src={thumbUrl(url, 128)} alt="" decoding="async" className="h-full w-full object-cover" />
+            </button>
             <button
               type="button"
               onClick={() => removeAt(i)}
@@ -59,6 +69,12 @@ export default function ImageUploader({ images, onChange }) {
       </div>
       <p className="field-hint">Uploaded images go straight to Cloudinary and the link is added automatically.</p>
 
+      <ImageLightbox
+        images={images}
+        index={previewIndex}
+        onClose={() => setPreviewIndex(null)}
+        onIndexChange={setPreviewIndex}
+      />
       <ImagePickerModal
         open={pickerOpen}
         selected={images}

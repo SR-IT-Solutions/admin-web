@@ -1,4 +1,5 @@
 import EnquiryRow from "./EnquiryRow";
+import EnquiryCard from "./EnquiryCard";
 
 const HEADINGS = ["Customer", "Phone", "Item", "Status", "Note", "Date", ""];
 
@@ -9,7 +10,20 @@ export default function EnquiryTable({
   onStatusChange,
 }) {
   return (
-    <div className="-mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
+    <>
+    <div className="space-y-2.5 md:hidden">
+      {enquiries.map((enquiry) => (
+        <EnquiryCard
+          key={enquiry.id}
+          enquiry={enquiry}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          onStatusChange={onStatusChange}
+        />
+      ))}
+    </div>
+
+    <div className="hidden overflow-x-auto md:block">
     <table className="w-full min-w-200 overflow-hidden rounded-lg border border-border bg-panel">
       <thead>
         <tr className="bg-[#fbfaf8]">
@@ -36,5 +50,6 @@ export default function EnquiryTable({
       </tbody>
     </table>
     </div>
+    </>
   );
 }

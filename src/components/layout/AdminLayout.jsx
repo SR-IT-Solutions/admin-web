@@ -1,24 +1,26 @@
-import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
-import { MobileTopBar, MobileBottomNav } from "./MobileNav";
+import { MobileBottomNav } from "./MobileNav";
 import SettingsModal from "../settings/SettingsModal";
-import LoginScreen from "../auth/LoginScreen";
 import UnlockScreen from "../settings/UnlockScreen";
 import { useSettings } from "../../context/SettingsContext";
 import { useAuth } from "../../context/AuthContext";
 
 export default function AdminLayout() {
-  const { isConfigured, vaultExists, unlocked, forget } = useSettings();
-  const { isAuthenticated, loading: authLoading } = useAuth();
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  const { settings, isConfigured, vaultExists, unlocked, forget } =
+    useSettings();
+  const { loading: authLoading } = useAuth();
+
+  const hasCredentials = Boolean(
+    settings.adminEmail && settings.adminPassword,
+  );
 
   if (vaultExists && !unlocked) {
     return <UnlockScreen onForget={forget} />;
   }
 
-  if (!vaultExists) {
-    return <SettingsModal open forced onClose={() => setSettingsOpen(false)} />;
+  if (!vaultExists || !hasCredentials) {
+    return <SettingsModal open />;
   }
 
   if (isConfigured && authLoading) {
@@ -29,26 +31,15 @@ export default function AdminLayout() {
     );
   }
 
-  if (isConfigured && !isAuthenticated) {
-    return <LoginScreen />;
-  }
-
   return (
     <div className="min-h-screen">
-      <Sidebar onOpenSettings={() => setSettingsOpen(true)} />
-      <MobileTopBar onOpenSettings={() => setSettingsOpen(true)} />
+      <Sidebar />
 
       <div className="pb-16 md:pb-0 md:pl-57.5">
         <Outlet context={{ isConfigured }} />
       </div>
 
       <MobileBottomNav />
-
-      <SettingsModal
-        open={settingsOpen}
-        forced={!isConfigured}
-        onClose={() => setSettingsOpen(false)}
-      />
     </div>
   );
 }

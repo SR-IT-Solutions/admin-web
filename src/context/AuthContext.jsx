@@ -5,7 +5,7 @@ import { getSupabaseClient } from "../lib/supabaseClient";
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const { settings, isConfigured } = useSettings();
+  const { settings, isConfigured, forget } = useSettings();
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -19,17 +19,43 @@ export function AuthProvider({ children }) {
     }
 
     let active = true;
+    let settled = false;
 
-    client.auth.getSession().then(({ data }) => {
+    const resolve = async () => {
+      const { data } = await client.auth.getSession();
       if (!active) return;
-      setSession(data.session ?? null);
+
+      if (data.session) {
+        setSession(data.session);
+        settled = true;
+        setLoading(false);
+        return;
+      }
+
+      if (settings.adminEmail && settings.adminPassword) {
+        const { data: signedIn } = await client.auth.signInWithPassword({
+          email: settings.adminEmail,
+          password: settings.adminPassword,
+        });
+        if (!active) return;
+        setSession(signedIn?.session ?? null);
+        settled = true;
+        setLoading(false);
+        return;
+      }
+
+      setSession(null);
+      settled = true;
       setLoading(false);
-    });
+    };
+
+    resolve();
 
     const {
       data: { subscription },
     } = client.auth.onAuthStateChange((_event, nextSession) => {
       if (!active) return;
+      if (!settled && !nextSession) return;
       setSession(nextSession);
       setLoading(false);
     });
@@ -38,17 +64,26 @@ export function AuthProvider({ children }) {
       active = false;
       subscription.unsubscribe();
     };
-  }, [client]);
+  }, [client, settings.adminEmail, settings.adminPassword]);
 
   const signIn = async (email, password) => {
-    if (!client) throw new Error("Add your Supabase details in Settings first.");
+    if (!client)
+      throw new Error("Add your Supabase details in Settings first.");
     const { error } = await client.auth.signInWithPassword({ email, password });
     if (error) throw error;
   };
 
   const signOut = async () => {
-    if (!client) return;
-    await client.auth.signOut();
+    try {
+      if (client) await client.auth.signOut();
+    } catch {
+      setSession(null);
+    }
+    forget();
+    setSession(null);
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.reload();
   };
 
   const value = {

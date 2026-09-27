@@ -43,3 +43,8 @@ pnpm-debug.log*
 *.sw?
 # Local credential reference — never commit
 CREDENTIALS.local.md
+
+# Admin setup files hold live credentials — only the example is tracked
+setup.json
+setup*.local.json
+*.setup.json

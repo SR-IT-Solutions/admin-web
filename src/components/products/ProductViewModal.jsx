@@ -1,4 +1,7 @@
+import { useState } from "react";
 import Modal from "../ui/Modal";
+import ImageLightbox from "../ui/ImageLightbox";
+import { thumbUrl } from "../../lib/imageUrl";
 import { categoryHasSpecs } from "../../constants/options";
 
 function ChipList({ values }) {
@@ -17,6 +20,8 @@ function ChipList({ values }) {
 }
 
 export default function ProductViewModal({ open, product, onClose, onEdit }) {
+  const [previewIndex, setPreviewIndex] = useState(null);
+
   if (!product) return null;
 
   const images = Array.isArray(product["Image URL"])
@@ -39,14 +44,22 @@ export default function ProductViewModal({ open, product, onClose, onEdit }) {
     >
       <div className="mb-3 flex flex-wrap gap-2">
         {images.length ? (
-          images.map((url) => (
-            <div key={url} className="h-22 w-22">
+          images.map((url, i) => (
+            <button
+              key={url}
+              type="button"
+              onClick={() => setPreviewIndex(i)}
+              aria-label={`Preview image ${i + 1}`}
+              className="h-22 w-22 overflow-hidden rounded-md border border-border transition hover:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+            >
               <img
-                src={url}
+                src={thumbUrl(url, 176)}
                 alt=""
-                className="h-full w-full rounded-md border border-border object-cover"
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover"
               />
-            </div>
+            </button>
           ))
         ) : (
           <span className="text-[13px] text-muted">No images</span>
@@ -122,6 +135,12 @@ export default function ProductViewModal({ open, product, onClose, onEdit }) {
           Edit product
         </button>
       </div>
+      <ImageLightbox
+        images={images}
+        index={previewIndex}
+        onClose={() => setPreviewIndex(null)}
+        onIndexChange={setPreviewIndex}
+      />
     </Modal>
   );
 }

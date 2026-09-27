@@ -7,11 +7,13 @@ import {
 } from "react";
 import { clearVault, hasVault, openVault, saveVault } from "../lib/vault";
 
-const EMPTY_SETTINGS = {
+export const EMPTY_SETTINGS = {
   supabaseUrl: "",
   supabaseKey: "",
   cloudName: "",
   uploadPreset: "",
+  adminEmail: "",
+  adminPassword: "",
 };
 
 const SettingsContext = createContext(null);
@@ -24,7 +26,7 @@ export function SettingsProvider({ children }) {
   const unlock = useCallback(async (passphrase) => {
     const stored = await openVault(passphrase);
     if (!stored) return false;
-    setSettings(stored);
+    setSettings({ ...EMPTY_SETTINGS, ...stored });
     setUnlocked(true);
     return true;
   }, []);

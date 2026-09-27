@@ -12,6 +12,7 @@ import {
   SPEC_FIELDS,
   categoryHasSpecs,
 } from "../../constants/options";
+import { formatPriceInput, parsePriceInput } from "../../lib/priceInput";
 
 function toFormState(product) {
   if (!product) return { ...EMPTY_PRODUCT };
@@ -96,12 +97,14 @@ export default function ProductForm({ product, onSave, onCancel }) {
         <div>
           <label className="field-label">Price (₹)</label>
           <input
-            type="number"
-            step="0.01"
+            type="text"
+            inputMode="decimal"
+            autoComplete="off"
             className="text-input"
             required
-            value={form.Price}
-            onChange={(e) => set("Price")(e.target.value)}
+            placeholder="12,340"
+            value={formatPriceInput(form.Price)}
+            onChange={(e) => set("Price")(parsePriceInput(e.target.value))}
           />
         </div>
       </div>

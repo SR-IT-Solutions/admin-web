@@ -1,5 +1,6 @@
 import { Check } from "lucide-react";
 import Modal from "../ui/Modal";
+import { thumbUrl } from "../../lib/imageUrl";
 import StatusMessage from "../ui/StatusMessage";
 import { useImageLibrary } from "../../hooks/useImageLibrary";
 
@@ -41,9 +42,10 @@ export default function ImagePickerModal({ open, selected, onPick, onClose }) {
                   }`}
                 >
                   <img
-                    src={url}
+                    src={thumbUrl(url, 320)}
                     alt=""
                     loading="lazy"
+                    decoding="async"
                     className="h-full w-full object-cover"
                   />
                   {isSelected && (

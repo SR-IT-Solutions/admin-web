@@ -5,6 +5,24 @@
   body {
     @apply bg-bg text-ink antialiased;
   }
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(20, 18, 14, 0.28) transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(20, 18, 14, 0.28);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(20, 18, 14, 0.45);
+  }
 }
 
 @layer components {

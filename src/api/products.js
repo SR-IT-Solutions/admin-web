@@ -1,4 +1,5 @@
 import { PRODUCTS_TABLE } from "../lib/supabaseClient";
+import { priceToNumber } from "../lib/priceInput";
 
 export async function fetchProducts(client) {
   const { data, error } = await client
@@ -88,9 +89,7 @@ export function toPayload(form) {
   return {
     Title: form.Title.trim(),
     Category: form.Category,
-    Price: Number.isFinite(parseFloat(form.Price))
-      ? parseFloat(form.Price)
-      : null,
+    Price: priceToNumber(form.Price),
     Tag: form.Tag.trim(),
     Description: form.Description.trim(),
     Featured: Boolean(form.Featured),

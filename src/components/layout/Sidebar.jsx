@@ -1,6 +1,9 @@
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Package, Plus, Users, Settings, LogOut } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import ConfirmDialog from "../ui/ConfirmDialog";
+import { SIGN_OUT_MESSAGE } from "./signOutMessage";
 
 export const TABS = [
   { to: "/admin-web/", label: "Products", icon: Package, end: true },
@@ -8,8 +11,9 @@ export const TABS = [
   { to: "/admin-web/enquiries", label: "Enquiries", icon: Users },
 ];
 
-export default function Sidebar({ onOpenSettings }) {
+export default function Sidebar() {
   const { user, signOut } = useAuth();
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   return (
     <aside className="fixed inset-y-0 left-0 z-40 hidden w-57.5 flex-col border-r border-border bg-panel md:flex">
@@ -44,23 +48,36 @@ export default function Sidebar({ onOpenSettings }) {
       </nav>
 
       <div className="space-y-1 border-t border-border px-3 py-3">
-        <button
-          type="button"
-          onClick={onOpenSettings}
-          className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-[13.5px] text-ink hover:bg-bg"
+        <NavLink
+          to="/admin-web/settings"
+          className={({ isActive }) =>
+            `flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-[13.5px] transition-colors ${
+              isActive ? "bg-accent-soft font-medium text-accent" : "text-ink hover:bg-bg"
+            }`
+          }
         >
           <Settings size={16} />
           Settings
-        </button>
+        </NavLink>
         <button
           type="button"
-          onClick={signOut}
+          onClick={() => setConfirmOpen(true)}
           className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-[13.5px] text-ink hover:bg-bg"
         >
           <LogOut size={16} />
           Sign out
         </button>
       </div>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Sign out?"
+        message={SIGN_OUT_MESSAGE}
+        confirmLabel="Sign out"
+        danger
+        onConfirm={signOut}
+        onClose={() => setConfirmOpen(false)}
+      />
     </aside>
   );
 }

@@ -5,16 +5,7 @@ import {
   SOURCE_LABEL,
 } from "../../constants/enquiries";
 
-function formatDate(value) {
-  if (!value) return "—";
-  return new Date(value).toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-}
-
-const digitsOnly = (phone) => String(phone || "").replace(/\D/g, "");
+import { formatDate, digitsOnly } from "./enquiryFormat";
 
 export default function EnquiryRow({
   enquiry,

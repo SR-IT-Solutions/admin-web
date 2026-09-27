@@ -1,6 +1,9 @@
 import { X } from "lucide-react";
+import { useScrollLock } from "../../hooks/useScrollLock";
 
 export default function Modal({ open, onClose, title, children, wide = false }) {
+  useScrollLock(open);
+
   if (!open) return null;
 
   return (

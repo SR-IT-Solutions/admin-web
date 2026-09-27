@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { KeyRound } from "lucide-react";
 import StatusMessage from "../ui/StatusMessage";
+import PinInput from "../ui/PinInput";
 import { useSettings } from "../../context/SettingsContext";
 
 export default function UnlockScreen({ onForget }) {
@@ -9,17 +10,26 @@ export default function UnlockScreen({ onForget }) {
   const [status, setStatus] = useState({ text: "", tone: "muted" });
   const [busy, setBusy] = useState(false);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const attempt = async (pin) => {
     setBusy(true);
     setStatus({ text: "Unlocking…", tone: "muted" });
 
-    const ok = await unlock(passphrase);
+    const ok = await unlock(pin);
     if (!ok) {
-      setStatus({ text: "That passphrase doesn't match.", tone: "error" });
+      setStatus({ text: "That PIN doesn't match.", tone: "error" });
       setBusy(false);
       setPassphrase("");
     }
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (passphrase.length === 4) attempt(passphrase);
+  };
+
+  const handleChange = (pin) => {
+    setPassphrase(pin);
+    if (status.tone === "error") setStatus({ text: "", tone: "muted" });
   };
 
   return (
@@ -34,32 +44,37 @@ export default function UnlockScreen({ onForget }) {
               Catalog Admin
             </h1>
             <p className="mt-1 text-[13px] text-muted">
-              Enter your passphrase to unlock
+              Enter your PIN to unlock
             </p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <label className="field-label" htmlFor="vault-passphrase">
-            Passphrase
+          <label
+            className="field-label text-center"
+            htmlFor="vault-passphrase"
+          >
+            4-digit PIN
           </label>
-          <input
+          <PinInput
             id="vault-passphrase"
-            type="password"
-            className="text-input"
-            autoComplete="off"
-            data-bwignore="true"
-            data-1p-ignore="true"
-            data-lpignore="true"
+            center
             autoFocus
-            required
+            disabled={busy}
             value={passphrase}
-            onChange={(event) => setPassphrase(event.target.value)}
+            onChange={handleChange}
+            onComplete={attempt}
           />
 
-          <StatusMessage tone={status.tone}>{status.text}</StatusMessage>
+          <div className="text-center">
+            <StatusMessage tone={status.tone}>{status.text}</StatusMessage>
+          </div>
 
-          <button type="submit" className="btn mt-4 w-full justify-center" disabled={busy}>
+          <button
+            type="submit"
+            className="btn mt-4 w-full justify-center"
+            disabled={busy || passphrase.length !== 4}
+          >
             {busy ? "Unlocking…" : "Unlock"}
           </button>
         </form>
