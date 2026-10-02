@@ -94,7 +94,7 @@ export default function CatalogPage() {
         products={visible}
         view={view}
         onView={setViewProduct}
-        onEdit={(p) => navigate(`/admin-web/products/${p.id}`)}
+        onEdit={(p) => navigate(`/products/${p.id}`)}
         onDelete={handleDelete}
         onToggleActive={handleToggleActive}
       />
@@ -118,7 +118,7 @@ export default function CatalogPage() {
           <button
             type="button"
             className="btn"
-            onClick={() => navigate("/admin-web/products/new")}
+            onClick={() => navigate("/products/new")}
           >
             <Plus size={15} />
             <span className="hidden sm:inline">New Product</span>
@@ -188,7 +188,7 @@ export default function CatalogPage() {
         onEdit={() => {
           const p = viewProduct;
           setViewProduct(null);
-          navigate(`/admin-web/products/${p.id}`);
+          navigate(`/products/${p.id}`);
         }}
       />
     </div>

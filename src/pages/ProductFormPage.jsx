@@ -9,7 +9,7 @@ export default function ProductFormPage() {
   const navigate = useNavigate();
   const { product, status, error, save } = useProduct(id);
 
-  const backToList = () => navigate("/admin-web/");
+  const backToList = () => navigate("/");
 
   const handleSave = async (form) => {
     await save(form);

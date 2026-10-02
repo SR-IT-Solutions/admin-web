@@ -8,7 +8,7 @@ import SettingsPage from "./pages/SettingsPage";
 export default function App() {
   return (
     <Routes>
-      <Route path="/admin-web" element={<AdminLayout />}>
+      <Route path="/" element={<AdminLayout />}>
         <Route index element={<CatalogPage />} />
         <Route path="products/new" element={<ProductFormPage />} />
         <Route path="products/:id" element={<ProductFormPage />} />

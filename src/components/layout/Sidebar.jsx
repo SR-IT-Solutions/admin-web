@@ -6,9 +6,9 @@ import ConfirmDialog from "../ui/ConfirmDialog";
 import { SIGN_OUT_MESSAGE } from "./signOutMessage";
 
 export const TABS = [
-  { to: "/admin-web/", label: "Products", icon: Package, end: true },
-  { to: "/admin-web/products/new", label: "New Product", icon: Plus },
-  { to: "/admin-web/enquiries", label: "Enquiries", icon: Users },
+  { to: "/", label: "Products", icon: Package, end: true },
+  { to: "/products/new", label: "New Product", icon: Plus },
+  { to: "/enquiries", label: "Enquiries", icon: Users },
 ];
 
 export default function Sidebar() {
@@ -49,7 +49,7 @@ export default function Sidebar() {
 
       <div className="space-y-1 border-t border-border px-3 py-3">
         <NavLink
-          to="/admin-web/settings"
+          to="/settings"
           className={({ isActive }) =>
             `flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-[13.5px] transition-colors ${
               isActive ? "bg-accent-soft font-medium text-accent" : "text-ink hover:bg-bg"

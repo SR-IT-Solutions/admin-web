@@ -4,7 +4,7 @@ import { TABS } from "./Sidebar";
 
 const MOBILE_TABS = [
   ...TABS,
-  { to: "/admin-web/settings", label: "Settings", icon: Settings },
+  { to: "/settings", label: "Settings", icon: Settings },
 ];
 
 export function MobileBottomNav() {
