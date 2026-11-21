@@ -59,32 +59,17 @@ export const RAM_GROUPS = [
   },
 ];
 
+const INTEL_GENERATIONS = ["5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th", "13th"];
+
+function intelGenerations(tier) {
+  return INTEL_GENERATIONS.map((gen) => `Intel ${tier} ${gen} Gen`);
+}
+
 export const PROCESSOR_GROUPS = [
   { label: "Intel Entry", options: ["Intel Celeron", "Intel Pentium"] },
-  {
-    label: "Intel Core i3",
-    options: ["Intel i3 8th Gen", "Intel i3 10th Gen", "Intel i3 12th Gen"],
-  },
-  {
-    label: "Intel Core i5",
-    options: [
-      "Intel i5 7th Gen",
-      "Intel i5 8th Gen",
-      "Intel i5 10th Gen",
-      "Intel i5 12th Gen",
-      "Intel i5 13th Gen",
-    ],
-  },
-  {
-    label: "Intel Core i7",
-    options: [
-      "Intel i7 7th Gen",
-      "Intel i7 8th Gen",
-      "Intel i7 10th Gen",
-      "Intel i7 12th Gen",
-      "Intel i7 13th Gen",
-    ],
-  },
+  { label: "Intel Core i3", options: intelGenerations("i3") },
+  { label: "Intel Core i5", options: intelGenerations("i5") },
+  { label: "Intel Core i7", options: intelGenerations("i7") },
   {
     label: "Intel Core i9",
     options: ["Intel i9 10th Gen", "Intel i9 12th Gen", "Intel i9 13th Gen"],
@@ -116,6 +101,17 @@ export const STORAGE_GROUPS = [
       "1TB SSD",
       "2TB SSD",
       "4TB SSD",
+    ],
+  },
+  {
+    label: "NVMe SSD",
+    options: [
+      "128GB NVMe SSD",
+      "256GB NVMe SSD",
+      "512GB NVMe SSD",
+      "1TB NVMe SSD",
+      "2TB NVMe SSD",
+      "4TB NVMe SSD",
     ],
   },
   {
